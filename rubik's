@@ -1,1 +1,158 @@
 
+// This C++ project models a simplified Rubik's Cube and demonstrates
+// object-oriented programming concepts, data structures, and basic algorithms.
+// It's designed to be a single-file executable suitable for a resume.
+
+#include <iostream> // For input/output operations (e.g., std::cout, std::cin)
+#include <string>   // For using std::string
+#include <vector>   // For using std::vector to represent cube state
+#include <random>   // For random number generation (scrambling)
+#include <algorithm> // For std::shuffle
+
+// Define a simple class to represent a Rubik's Cube.
+// This implementation uses a 1D array to store the colors of all 54 stickers.
+// Faces are ordered: Up, Left, Front, Right, Back, Down.
+// Each face has 9 stickers, indexed from 0 to 8:
+//   0 1 2
+//   3 4 5
+//   6 7 8
+class RubiksCube {
+public:
+    // Constructor: Initializes the cube to its solved state.
+    RubiksCube() {
+        std::cout << "Initializing Rubik's Cube to solved state..." << std::endl;
+        // Solved state colors:
+        // U: White (W)
+        // L: Orange (O)
+        // F: Green (G)
+        // R: Red (R)
+        // B: Blue (B)
+        // D: Yellow (Y)
+
+        // Initialize all 54 stickers.
+        // Each face has 9 stickers.
+        // U (White)
+        for (int i = 0; i < 9; ++i) cubeState[i] = 'W';
+        // L (Orange)
+        for (int i = 9; i < 18; ++i) cubeState[i] = 'O';
+        // F (Green)
+        for (int i = 18; i < 27; ++i) cubeState[i] = 'G';
+        // R (Red)
+        for (int i = 27; i < 36; ++i) cubeState[i] = 'R';
+        // B (Blue)
+        for (int i = 36; i < 45; ++i) cubeState[i] = 'B';
+        // D (Yellow)
+        for (int i = 45; i < 54; ++i) cubeState[i] = 'Y';
+
+        std::cout << "Cube initialized." << std::endl;
+    }
+
+    // Displays the current state of the cube in a simplified text-based format.
+    // This is a basic visual representation, not a full 3D rendering.
+    void displayState() const {
+        std::cout << "\n--- Current Cube State ---" << std::endl;
+
+        // Helper to print a face
+        auto printFace = [&](int start_index, const std::string& face_name) {
+            std::cout << "  " << face_name << " Face:" << std::endl;
+            for (int i = 0; i < 9; ++i) {
+                std::cout << cubeState[start_index + i] << ( (i + 1) % 3 == 0 ? "\n" : " " );
+            }
+        };
+
+        // Print Up face (0-8)
+        std::cout << "        "; printFace(0, "Up (W)");
+        std::cout << "\n";
+
+        // Print Left, Front, Right, Back faces in a row (simplified alignment)
+        // This part is tricky for perfect alignment in console, focusing on clarity.
+        std::cout << "  Left (O)   Front (G)   Right (R)   Back (B)\n";
+        for (int row = 0; row < 3; ++row) {
+            // Left face (9-17)
+            for (int i = 0; i < 3; ++i) std::cout << cubeState[9 + row * 3 + i] << " ";
+            std::cout << "  ";
+            // Front face (18-26)
+            for (int i = 0; i < 3; ++i) std::cout << cubeState[18 + row * 3 + i] << " ";
+            std::cout << "  ";
+            // Right face (27-35)
+            for (int i = 0; i < 3; ++i) std::cout << cubeState[27 + row * 3 + i] << " ";
+            std::cout << "  ";
+            // Back face (36-44)
+            for (int i = 0; i < 3; ++i) std::cout << cubeState[36 + row * 3 + i] << " ";
+            std::cout << "\n";
+        }
+        std::cout << "\n";
+
+        // Print Down face (45-53)
+        std::cout << "        "; printFace(45, "Down (Y)");
+        std::cout << "-------------------------" << std::endl;
+    }
+
+    // Simulates scrambling the cube by performing a random number of moves.
+    // This is a simplified scramble, not a fully random state generator.
+    void scramble(int numMoves) {
+        std::cout << "\nScrambling cube with " << numMoves << " random moves..." << std::endl;
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> face_dist(0, 5); // 6 faces
+        std::uniform_int_distribution<> dir_dist(0, 1); // 0 for clockwise, 1 for counter-clockwise
+
+        char faces[] = {'U', 'L', 'F', 'R', 'B', 'D'};
+        std::string directions[] = {"clockwise", "counter-clockwise"};
+
+        for (int i = 0; i < numMoves; ++i) {
+            char face = faces[face_dist(gen)];
+            int dir_idx = dir_dist(gen);
+            // In a real implementation, 'makeMove' would modify cubeState.
+            // For this example, we'll just print the move.
+            std::cout << "  Performing move: " << face << " " << directions[dir_idx] << std::endl;
+            // TODO: Implement actual state changes for makeMove
+        }
+        std::cout << "Scrambling complete (conceptual)." << std::endl;
+    }
+
+    // Placeholder for a solving algorithm.
+    // A real Rubik's Cube solver would implement algorithms like BFS, IDA*, etc.
+    void solve() {
+        std::cout << "\nAttempting to solve the cube..." << std::endl;
+        std::cout << "  (This is a placeholder for a complex solving algorithm like Korf's IDA* or BFS/DFS.)" << std::endl;
+        std::cout << "  A full implementation would involve state-space search and heuristics." << std::endl;
+        std::cout << "Cube is now conceptually solved." << std::endl;
+        // For demonstration, reset to solved state after "solving"
+        RubiksCube(); // Re-initialize to solved state
+    }
+
+private:
+    // Represents the cube's state as a 1D array of characters (colors).
+    // Total 54 stickers (6 faces * 9 stickers/face).
+    // 'W': White, 'O': Orange, 'G': Green, 'R': Red, 'B': Blue, 'Y': Yellow
+    char cubeState[54];
+
+    // TODO: Add private helper functions for actual face rotations (e.g., rotateFaceClockwise, rotateFaceCounterClockwise)
+    // These functions would manipulate the 'cubeState' array based on the specific face rotation.
+};
+
+// The main function is the entry point of the C++ program.
+int main() {
+    std::cout << "Welcome to the Rubik's Cube Simulator (Simplified)!" << std::endl;
+    std::cout << "---------------------------------------------------" << std::endl;
+
+    // Create an instance of the RubiksCube class
+    RubiksCube myCube;
+
+    // Display the initial solved state
+    myCube.displayState();
+
+    // Scramble the cube with a few random moves
+    myCube.scramble(5); // Scramble with 5 conceptual moves
+    myCube.displayState(); // Display state after "scrambling"
+
+    // Attempt to solve the cube (conceptual)
+    myCube.solve();
+    myCube.displayState(); // Display state after "solving" (should be solved again)
+
+    std::cout << "\nProgram finished. Press Enter to exit." << std::endl;
+    std::cin.get(); // Wait for user input before closing the console (for some environments)
+
+    return 0; // Indicate successful program execution
+}
